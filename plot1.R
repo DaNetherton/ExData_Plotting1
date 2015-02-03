@@ -1,26 +1,29 @@
-epc <- read.table("household_power_consumption.txt", header = TRUE, na.strings = "?",
-   sep = ";")
+setwd("c:/ExData_Plotting1")
+# Read in the data for the plots.  This assumes that the file 
+#	"household_power_consumption.txt" is in the working directory
+epc <- read.table("household_power_consumption.txt", skip=66637, nrows=2880, 
+                   na.strings = "?", stringsAsFactors=FALSE, sep = ";")
+				   
+# Read in the names by just loading part of the dataset 
+labs <- read.table("household_power_consumption.txt", header = TRUE, nrows=1, sep = ";")
 
-epc <- tbl_df(epc)
-epc
-glimpse(epc)
+## And then pulling out the header and applying it to the dataset
+names(epc)<-names(labs)
 
-a<-as.character(epc$Date)
-b<-as.character(epc$Time)
-x <- paste(a, b)
-y<-strptime(x, "%d/%m/%Y %H:%M:%S")
-y
-epc$datetime<-y
+# Create a datetime field from the Date and Time fields to serve as the x axis of the plots.
+a <- as.character(epc$Date)
+b <- as.character(epc$Time)
+c <- paste(a, b)
+epc$datetime<-strptime(c, "%d/%m/%Y %H:%M:%S")
 
-epc$Date<-as.Date(epc$Date, "%d/%m/%Y")
-
-# Only using 2007-02-01 and 2007-02-02
-feb<-subset(epc, datetime>="2007-02-01 00:00:00 PST" & datetime<"2007-02-03 00:00:00 PST")
-
+# Plot 1
+## Open the device with these parameters
 png(filename = "plot1.png", width = 480, height = 480, units = "px", pointsize = 12, 
 	bg = "white", res = NA, family = "")
 
-hist(feb$Global_active_power, col="#FF2500", yaxp=c(0, 1400, 7), main="Global Active Power",
+## Plot the histogram
+hist(epc$Global_active_power, col="#FF2500", yaxp=c(0, 1400, 7), main="Global Active Power",
     xlab="Global Active Power (kilowatts)")
 
- dev.off()
+## Close the device
+dev.off()
